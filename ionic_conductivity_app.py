@@ -742,7 +742,7 @@ elif page=="🤖  ML Prediction":
                                   "messages"   : [{"role": "user",
                                                    "content": _prompt}],
                                   "temperature": 0.3,
-                                  "max_tokens" : 1200},
+                                  "max_tokens" : 3000},
                             timeout=60,
                         )
                         _resp.raise_for_status()
