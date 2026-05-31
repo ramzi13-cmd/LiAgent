@@ -211,6 +211,9 @@ with st.sidebar:
                "💬  AI Assistant"]
     page = st.radio("Navigation", _pages,
                     label_visibility="collapsed")
+    # Clear screening results when navigating away
+    if page != "⚗️  Composition Screening":
+        st.session_state["_screen_done"] = False
     st.markdown("---")
     st.markdown("**Dataset:** 4,407 rows")
     st.markdown("**Unique compounds:** 342")
