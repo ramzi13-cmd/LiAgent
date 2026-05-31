@@ -14,7 +14,10 @@ try:
     load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env'))
 except ImportError:
     pass
-_ENV_OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+_ENV_OPENROUTER_KEY = (
+    st.secrets.get("OPENROUTER_API_KEY", "")
+    if hasattr(st, "secrets") else ""
+) or os.environ.get("OPENROUTER_API_KEY", "")
 
 
 
@@ -29,7 +32,7 @@ DATA_PATH   = PROJECT_DIR + 'merged_database.xlsx'
 MODEL_PATH  = PROJECT_DIR + 'merged_model.pkl'
 FEAT_PATH   = PROJECT_DIR + 'merged_feature_cols.pkl'
 EP_PATH     = PROJECT_DIR + 'ep_featurizer.pkl'
-MP_API_KEY  = "mddbYl4G7GEGMqSpLanKNM7T3xYbeK9q"
+MP_API_KEY  = os.environ.get("MP_API_KEY", "mddbYl4G7GEGMqSpLanKNM7T3xYbeK9q")
 
 st.markdown("""
 <style>
