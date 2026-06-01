@@ -1157,7 +1157,7 @@ elif page=="📊  Model Performance":
 | **MAE** | Average error in log10(sigma) units | < 0.2 |
 | **MAE in real terms** | 10^MAE = average factor error | < 1.5x |
 
-**Best model: XGBoost (R² = 0.983)** — explains 98.3% of variance in random split validation (80/20 split, 5-fold CV). Compound-split cross-validation R² = 0.543 reflects true generalization to new compositions.
+
     """)
 
 # ── FEATURE IMPORTANCE ────────────────────────────────────────
