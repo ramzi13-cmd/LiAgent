@@ -109,7 +109,7 @@ def load_all_models():
             "color": "#F39C12"},
         "Random Forest": {
             "file": "new_model.pkl",
-            "r2": 0.963, "mae": 0.161,
+            "r2": 0.977, "mae": 0.164,
             "color": "#8E44AD"},
         "Neural Network": {
             "file": "mlp_model.pkl",
