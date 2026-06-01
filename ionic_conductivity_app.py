@@ -309,7 +309,7 @@ elif page=="🔍  Compound Explorer":
     s1,s2=st.columns([4,1])
     with s1: search=st.text_input("Search",placeholder="Composition: Li7La3Zr2O12 | Element: Sc | AND: La, Zr | DOI: 10.1002...",label_visibility="collapsed")
     with s2: search_btn=st.button("🔍 Search",use_container_width=True)
-    f1,f2,f3,f4=st.columns(4)
+    f1,f2,f3=st.columns(3)
     with f1:
         mc=['All Classes']+sorted(df_exp['Material Class'].dropna().unique().tolist())
         mat_class=st.selectbox("Material Class",mc)
@@ -321,8 +321,7 @@ elif page=="🔍  Compound Explorer":
         else: year_range=(2000,2026)
     with f3:
         sf=st.selectbox("Conductivity Range",["All","Excellent (>1 mS/cm)","Good (0.1-1 mS/cm)","Average (0.01-0.1 mS/cm)","Poor (<0.01 mS/cm)"])
-    with f4:
-        src=st.selectbox("Data Source",["All Sources","Original Dataset","Enhanced Dataset"])
+    src = "All Sources"
     df_filt=df_exp.copy()
     if search or search_btn:
         q=search.strip()
