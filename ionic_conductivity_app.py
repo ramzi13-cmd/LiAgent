@@ -1148,7 +1148,7 @@ elif page=="📊  Model Performance":
         fig_mae.update_layout(xaxis_tickangle=-30,yaxis_title='Test MAE (log10 mS/cm)',showlegend=False)
         st.plotly_chart(plotly_layout(fig_mae,380),use_container_width=True)
     st.markdown('<div class="section-title">Full Results Table</div>',unsafe_allow_html=True)
-    st.dataframe(dm[['Model','CV R2','CV Std','Test R2','Test MAE','Notes']],use_container_width=True)
+    st.dataframe(dm[['Model','CV R2','CV Std','Test R2','Test MAE','Notes']].set_index(pd.Index(range(1,len(dm)+1))),use_container_width=True)
     st.markdown("""
 | Metric | Meaning | Good value |
 |--------|---------|------------|
