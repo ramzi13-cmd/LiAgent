@@ -452,8 +452,8 @@ elif page=="🤖  ML Prediction":
     import plotly.graph_objects as go
     _preload = ""
     st.markdown("# ML Prediction")
-    st.markdown('<div class="info-box">Predict ionic conductivity for any composition using the Merged Model — XGBoost trained on 4,083 rows from 342 unique compounds, 146 features, R² = 0.983.</div>',unsafe_allow_html=True)
-    st.markdown('<div style="background:#FFF;border:1px solid #DDE3ED;border-top:4px solid #2E5FA3;border-radius:4px;padding:16px;margin-bottom:16px;"><div style="font-family:\'Source Serif 4\',serif;font-weight:600;color:#1B2A4A;font-size:1.1rem;">Merged Model (XGBoost)</div><div style="color:#5A6478;font-size:0.85rem;margin-top:6px;">→ 4,083 training rows | 342 unique compounds | 146 features<br>→ R² = 0.983 | MAE = 0.151 log10(mS/cm) | Best of 5 models</div></div>',unsafe_allow_html=True)
+    st.markdown('<div class="info-box">Predict ionic conductivity for any composition using XGBoost trained on 4,407 datapoints from 342 unique compounds, 146 features (145 Magpie + Temperature), CV R² = 0.971, Test R² = 0.983.</div>',unsafe_allow_html=True)
+    st.markdown('<div style="background:#FFF;border:1px solid #DDE3ED;border-top:4px solid #2E5FA3;border-radius:4px;padding:16px;margin-bottom:16px;"><div style="font-family:\'Source Serif 4\',serif;font-weight:600;color:#1B2A4A;font-size:1.1rem;">XGBoost — Default Model</div><div style="color:#5A6478;font-size:0.85rem;margin-top:6px;">→ 4,407 datapoints | 342 unique compounds | 146 features (145 Magpie + Temperature)<br>→ CV R² = 0.971 | Test R² = 0.983 | MAE = 0.158 log10(mS/cm) | Best of 5 models</div></div>',unsafe_allow_html=True)
     st.markdown('<div class="section-title">Input</div>',unsafe_allow_html=True)
     c1,c2,c3,c4=st.columns([2,1,1,1])
     with c1: composition=st.text_input("Composition",value="Li7La3Zr2O12",placeholder="e.g. Li7La3Zr2O12, Li6PS5Cl")
