@@ -288,7 +288,7 @@ elif page=="🔍  Compound Explorer":
     import plotly.express as px
     import plotly.graph_objects as go
     st.markdown("# Compound Explorer")
-    st.markdown('<div class="info-box">Explore 6,555 ionic conductivity measurements from 188 published papers. Search by composition, element, or DOI. Filter by material class, year, and conductivity range.</div>',unsafe_allow_html=True)
+    st.markdown('<div class="info-box">Search by composition, element, or DOI. Filter by material class, year, and conductivity range.</div>',unsafe_allow_html=True)
     try: df_exp=pd.read_excel(PROJECT_DIR+'merged_database.xlsx')
     except Exception as e: st.error(f"Could not load: {e}"); st.stop()
     df_exp['Conductivity'] =pd.to_numeric(df_exp['σ (mS/cm)'],errors='coerce')
