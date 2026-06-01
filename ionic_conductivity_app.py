@@ -1134,9 +1134,9 @@ elif page=="📊  Model Performance":
     st.markdown("# Model Performance")
     st.markdown('<div class="info-box">Performance of all 5 ML models trained on 4,407 data points from 342 unique solid electrolyte compounds.</div>',unsafe_allow_html=True)
     c1,c2,c3,c4=st.columns(4)
-    for col,(val,label) in zip([c1,c2,c3,c4],[("0.983","Best R² (XGBoost)"),("0.151","Best MAE (XGBoost)"),("5","Models Trained"),("146","Features Used")]):
+    for col,(val,label) in zip([c1,c2,c3,c4],[("0.983","Best R² (XGBoost)"),("0.158","Best MAE (XGBoost)"),("5","Models Trained"),("146","Features Used")]):
         col.markdown(f'<div class="stat-card"><div class="stat-value">{val}</div><div class="stat-label">{label}</div></div>',unsafe_allow_html=True)
-    dm=pd.DataFrame({'Model':['Random Forest','XGBoost','XGBoost','LightGBM','Neural Network (MLP)'],'CV R2':[0.970,0.978,0.970,0.975,0.955],'CV Std':[0.005,0.004,0.003,0.004,0.005],'Test R2':[0.981,0.985,0.979,0.982,0.968],'Test MAE':[0.128,0.136,0.189,0.158,0.246],'Notes':['300 trees, sqrt features','Best model - 500 rounds, lr=0.05','300 rounds, depth=5','500 rounds, 63 leaves','3 layers (256-128-64)']})
+    dm=pd.DataFrame({'Model':['Random Forest','XGBoost','Gradient Boosting','LightGBM','Neural Network (MLP)'],'CV R2':[0.963,0.971,0.967,0.969,0.946],'CV Std':[0.004,0.003,0.004,0.004,0.006],'Test R2':[0.978,0.983,0.979,0.980,0.963],'Test MAE':[0.161,0.158,0.185,0.175,0.259],'Notes':['100 trees, sqrt features, depth=20','Best model - 500 rounds, lr=0.05, depth=6','500 rounds, lr=0.05, depth=5','500 rounds, lr=0.05, 63 leaves','3 layers (256-128-64), Adam, early stopping']})
     col1,col2=st.columns(2)
     with col1:
         st.markdown('<div class="section-title">R² by Model</div>',unsafe_allow_html=True)
@@ -1157,7 +1157,7 @@ elif page=="📊  Model Performance":
 | **MAE** | Average error in log10(sigma) units | < 0.2 |
 | **MAE in real terms** | 10^MAE = average factor error | < 1.5x |
 
-**Best model: XGBoost (R² = 0.983)** — explains 98.3% of variance in random split validation. Compound-split cross-validation R² = 0.543 reflects true generalization. Neural Network shows improvement on clean data (CV R²=0.946) but still needs more data.
+**Best model: XGBoost (R² = 0.983)** — explains 98.3% of variance in random split validation (80/20 split, 5-fold CV). Compound-split cross-validation R² = 0.543 reflects true generalization to new compositions. Neural Network (CV R²=0.946) shows strong performance on the current dataset and is expected to improve further as more data is added.
     """)
 
 # ── FEATURE IMPORTANCE ────────────────────────────────────────
