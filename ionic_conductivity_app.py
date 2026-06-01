@@ -683,9 +683,9 @@ elif page=="🤖  ML Prediction":
                                 for _ri,(_rdoc,_rmeta) in enumerate(
                                         zip(_rag_docs,_rag_metas),1):
                                     _rsrc = _rmeta.get(
-                                        "source","Unknown")[:50].replace(".pdf","")
+                                        "source","Unknown").replace(".pdf","")
                                     _rag_lines.append(
-                                        f"[Paper {_ri}: {_rsrc}]")
+                                        f"[{_rsrc}]")
                                     _rag_lines.append(_rdoc[:350])
                                     _rag_lines.append("")
                                 _rag_ctx_pred = "\n".join(_rag_lines)
@@ -1380,7 +1380,7 @@ Response guidelines:
 5. Acknowledge uncertainty honestly — never fabricate conductivity values.
 6. Audience is PhD-level; be concise and scientifically rigorous.
 7. Units: mS/cm for conductivity, eV for activation energy, C or K for temperature.
-8. When citing papers from context, say e.g. "According to [Paper 1: ...]"
+8. When citing papers from context, use the full paper name provided in brackets e.g. "According to [Smith et al. - 2023 - Title]". Never say "Paper 1" or "Paper 2".
 """
 
     # ── Sidebar: API key ──────────────────────────────────────
@@ -1465,10 +1465,12 @@ Response guidelines:
             for i,(chunk,meta) in enumerate(
                     zip(chunks,metas),1):
                 src = meta.get("source","Unknown")
-                # Truncate source name
-                src = src[:60].replace(".pdf","")
+                # Show full paper name without .pdf
+                src = src.replace(".pdf","")
+                # Extract author and year from filename
+                # e.g. "Smith et al. - 2023 - Title"
                 lines.append(
-                    f"[Paper {i}: {src}]")
+                    f"[{src}]")
                 lines.append(chunk[:400])
                 lines.append("")
             return "\n".join(lines)
