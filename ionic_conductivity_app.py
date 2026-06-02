@@ -369,10 +369,10 @@ elif page=="🔍  Compound Explorer":
             year=f"{int(row['Year'])}" if pd.notna(row['Year']) else "N/A"
             cls=row['MC'] if pd.notna(row['MC']) else "Unknown"
             mx=row['MxC']
-            if mx>=1.0:    bc,gr='#27AE60','Excellent'
-            elif mx>=0.1:  bc,gr='#2E5FA3','Good'
-            elif mx>=0.01: bc,gr='#F39C12','Average'
-            else:          bc,gr='#C8392B','Poor'
+            if mx>=0.01:    bc,gr='#27AE60','Excellent'
+            elif mx>=0.001:  bc,gr='#2E5FA3','Good'
+            elif mx>=0.0001: bc,gr='#F39C12','Low'
+            else:            bc,gr='#C8392B','Very Low'
             st.markdown(f'<div style="background:#FFF;border:1px solid #DDE3ED;border-radius:8px;padding:14px 18px;margin-bottom:8px;border-left:4px solid {bc};"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:700;color:#1B2A4A;font-size:1rem;">{row["Composition"]} <span style="background:{bc};color:white;font-size:0.7rem;padding:2px 7px;border-radius:10px;margin-left:8px;">{gr}</span></div><div style="color:#5A6478;font-size:0.82rem;margin-top:4px;">📅 {year} | 🧪 {cls} | 🌡️ {row["TR"]} | 📊 {int(row["N"])} measurements</div><div style="margin-top:6px;"><a href="{doi_url}" target="_blank" style="background:#2E5FA3;color:white;padding:4px 12px;border-radius:4px;text-decoration:none;font-size:0.8rem;">Open Paper: {doi}</a></div></div><div style="text-align:right;min-width:140px;"><div style="font-size:1.2rem;font-weight:700;color:{bc};">{mx:.4f}</div><div style="font-size:0.72rem;color:#5A6478;">Max Conductivity (mS/cm)</div><div style="font-size:0.75rem;color:#5A6478;">Range: {row["MnC"]:.4f}-{mx:.4f}</div></div></div></div>',unsafe_allow_html=True)
     st.markdown('<div class="section-title">📊 Visualizations</div>',unsafe_allow_html=True)
     tab1,tab2,tab3=st.tabs(["📅 Conductivity vs Publication Year","📈 Conductivity Distribution","🌡️ Conductivity vs Temperature"])
