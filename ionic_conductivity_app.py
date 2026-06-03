@@ -520,9 +520,9 @@ elif page=="🤖  ML Prediction":
             elif sigma>=0.000099: grade,badge="Low","badge-low"
             else:                 grade,badge="Very Low","badge-verylow"
             _grade_range = ("> 0.01 mS/cm" if sigma>=0.01
-    else "0.001 - 0.01 mS/cm" if sigma>=0.001
-    else "0.0001 - 0.001 mS/cm" if sigma>=0.0001
-    else "< 0.0001 mS/cm")
+                else "0.001 - 0.01 mS/cm" if sigma>=0.001
+                else "0.0001 - 0.001 mS/cm" if sigma>=0.0001
+                else "< 0.0001 mS/cm")
             st.markdown(f'<div class="result-box"><div style="font-size:0.9rem;color:#5A6478;margin-bottom:8px;">Predicted Ionic Conductivity for <b>{composition}</b> at {temp_c}°C</div><div><span class="result-sigma">{sigma:.4f}</span><span class="result-unit">mS/cm</span></div><div style="margin-top:12px;"><span class="badge {badge}">{grade} Conductivity</span><span style="font-size:0.82rem;color:#5A6478;margin-left:10px;">{_grade_range}</span></div><div style="margin-top:12px;font-size:0.9rem;color:#5A6478;">log₁₀(σ) = {log10_sigma:.4f} | Temperature = {temp_k:.2f} K</div></div>',unsafe_allow_html=True)
             st.markdown('<div class="section-title">Conductivity vs Temperature</div>',unsafe_allow_html=True)
             with st.spinner("Generating temperature sweep..."):
@@ -1080,7 +1080,7 @@ if st.session_state.get("_screen_done"):
                         marker=dict(size=6),
                         name=pred["formula"]))
                     for _v,_l,_c in [
-                        (1.0,"Excellent","#27AE60"),
+                        (0.01,"Excellent","#27AE60"),
                         (0.1,"Good","#2E5FA3"),
                         (0.01,"Average","#F39C12")]:
                         _fig2.add_hline(y=_v,line_dash="dot",
