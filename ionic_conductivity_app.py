@@ -516,8 +516,8 @@ elif page=="🤖  ML Prediction":
                 except Exception as e:
                     st.error(f"Error: {e}"); st.stop()
             if sigma>=0.0099:    grade,badge="Excellent","badge-high"
-            elif sigma>=0.00099:  grade,badge="Good","badge-medium"
-            elif sigma>=0.000099: grade,badge="Low","badge-low"
+            elif sigma>=0.00095:  grade,badge="Good","badge-medium"
+            elif sigma>=0.000095: grade,badge="Low","badge-low"
             else:                 grade,badge="Very Low","badge-verylow"
             _grade_range = ("> 0.01 mS/cm" if sigma>=0.01
                 else "0.001 - 0.01 mS/cm" if sigma>=0.001
