@@ -73,9 +73,19 @@ def _load_rag():
         col = client.get_collection(
             name="solid_electrolytes",
             embedding_function=emb_fn)
-        return col
+        return col, None
     except Exception as e:
-        return None
+        import os as _os
+        try:
+            _ls = _os.listdir("./rag_database")
+        except Exception as _e2:
+            _ls = "cannot list: " + str(_e2)
+        try:
+            import chromadb as _c
+            _v = _c.__version__
+        except Exception:
+            _v = "chromadb not importable"
+        return None, "chromadb " + str(_v) + " | " + type(e).__name__ + ": " + str(e)[:300] + " | rag_database contents: " + str(_ls)[:300]
 
 @st.cache_resource
 def load_model():
@@ -89,7 +99,7 @@ def load_model():
 df                   = load_data()
 model, feat_cols, ep = load_model()
 model_loaded         = model is not None
-_rag_collection      = _load_rag()
+_rag_collection, _rag_load_err = _load_rag()
 
 @st.cache_resource
 def load_all_models():
@@ -656,7 +666,7 @@ elif page=="🤖  ML Prediction":
                         _db_ctx = "\n".join(_db_lines) if _db_lines else "  No matching entries in database."
                         # ── RAG context for prediction ────────────
                         _rag_ctx_pred = ""
-                        st.session_state["_exp_sources"] = "RAG index not loaded (no literature was retrieved)."
+                        st.session_state["_exp_sources"] = "RAG index not loaded (no literature was retrieved). " + str(_rag_load_err)
                         try:
                             if _rag_collection is not None:
                                 _mat_class = ""
