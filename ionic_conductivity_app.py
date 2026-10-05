@@ -622,6 +622,8 @@ elif page=="🤖  ML Prediction":
                                 'mean_GSvolume_pa':'Mean elemental volume per atom (A^3)',
                                 'mean_GSbandgap':'Mean elemental band gap (eV)',
                                 'mean_GSmagmom':'Mean elemental magnetic moment',
+                                'dev_NdUnfilled':'Mean deviation of unfilled d-orbitals',
+                                'dev_Number':'Mean deviation of atomic number',
                                 'max_AtomicWeight':'Max Atomic Weight',
                                 'max_Electronegativity':'Max Electronegativity',
                                 'max_NdUnfilled':'Max Unfilled d-Orbitals',
@@ -631,8 +633,8 @@ elif page=="🤖  ML Prediction":
                                 'maxdiff_NValance':'Valence Electron Range',
                                 'maxdiff_NdValence':'d-Valence Electron Range',
                                 'maxdiff_NpValence':'p-Valence Electron Range',
-                                'dev_NpValence':'Std Dev p-Valence Electrons',
-                                'dev_NdValence':'Std Dev d-Valence Electrons',
+                                'dev_NpValence':'Mean deviation of p-valence electrons',
+                                'dev_NdValence':'Mean deviation of d-valence electrons',
                                 'MeanIonicChar':'Mean Ionic Character',
                                 'MaxIonicChar':'Max Ionic Character',
                                 'CanFormIonic':'Can Form Ionic Bonds',
@@ -668,13 +670,13 @@ elif page=="🤖  ML Prediction":
                                 )
                                 _rag_res = _rag_collection.query(
                                     query_texts=[_rag_query],
-                                    n_results=3,
+                                    n_results=4,
                                     include=["documents","metadatas","distances"])
                                 _rag_docs  = _rag_res["documents"][0]
                                 _rag_metas = _rag_res["metadatas"][0]
                                 _rag_dists = _rag_res["distances"][0]
                                 _rag_lines = ["Related literature context "
-                                              "(from 131 research papers):"]
+                                              "(from 130 research papers):"]
                                 _low_sim   = min(_rag_dists) > 0.7
                                 if _low_sim:
                                     _rag_lines.append(
@@ -691,7 +693,7 @@ elif page=="🤖  ML Prediction":
                                         "source","Unknown").replace(".pdf","")
                                     _rag_lines.append(
                                         f"[{_rsrc}]")
-                                    _rag_lines.append(_rdoc[:350])
+                                    _rag_lines.append(_rdoc[:1200])
                                     _rag_lines.append("")
                                 _rag_ctx_pred = "\n".join(_rag_lines)
                         except Exception as _re:
@@ -701,15 +703,16 @@ elif page=="🤖  ML Prediction":
                         _intro = (
                             "You are an expert in solid-state electrolytes "
                             "and ionic conductivity.\n\n"
-                            "=== PRIMARY REFERENCE (treat as ground truth) ===\n"
-                            "An XGBoost ML model (R2=0.983) predicted the "
+                            "=== MODEL PREDICTION ===\n"
+                            "An XGBoost ML model predicted the "
                             "ionic conductivity of " + _comp2 +
                             " at " + str(_tc2) + "C to be " +
                             str(round(_sig2,4)) + " mS/cm (log10=" +
                             str(round(_log2,4)) + "), rated as " +
                             _grade2 + " conductivity.\n"
-                            "DO NOT contradict this prediction. "
-                            "Use all context below to EXPLAIN it.\n\n"
+                            "This is a model estimate, not a measurement. Use the context "
+                            "below to explain it, and say so plainly where the "
+                            "experimental database or the literature disagrees.\n\n"
                             "=== SHAP FEATURE ANALYSIS ===\n"
                             "These are the top 8 features driving "
                             "the prediction (treat as mechanistic evidence):\n"
@@ -731,8 +734,13 @@ elif page=="🤖  ML Prediction":
                             "2. Discuss structure-property relationships.\n"
                             "3. Compare to database values and conclude.\n"
                             "Use plain language. Complete every sentence. "
-                            "Do not cite papers unless directly about "
-                            "this compound — say 'similar materials show' instead."
+                            "You may cite a paper from the literature context "
+                            "by its bracketed name, but only for a statement "
+                            "that its passage actually supports, and only if "
+                            "the passage is provided above. If a paper studied "
+                            "a different composition, say which one. Do not "
+                            "cite anything that is not in the context, and do "
+                            "not invent numbers."
                         )
                         _prompt = (
                             _intro + _shap_ctx +
@@ -1365,7 +1373,7 @@ elif page == "💬  AI Assistant":
 
     SYSTEM_PROMPT = """You are an expert AI research assistant specialising in
 solid-state electrolytes and ionic conductivity for all-solid-state batteries.
-You have access to context from 131 peer-reviewed papers on solid electrolytes.
+You have access to context from 130 peer-reviewed papers on solid electrolytes.
 
 Your expertise covers:
 - Solid electrolyte families: garnet (LLZO), NASICON, LISICON, perovskite,
@@ -1466,7 +1474,7 @@ Response guidelines:
                 return ""
             chunks = results["documents"][0]
             metas  = results["metadatas"][0]
-            lines  = ["### Context from 131 research papers:\n"]
+            lines  = ["### Context from 130 research papers:\n"]
             for i,(chunk,meta) in enumerate(
                     zip(chunks,metas),1):
                 src = meta.get("source","Unknown")
@@ -1603,7 +1611,7 @@ Response guidelines:
                     st.session_state["ai_display"].append(("assistant", answer))
                     sources = []
                     if rag_ctx:
-                        sources.append("📄 *RAG: Context from 131 research papers injected.*")
+                        sources.append("📄 *RAG: Context from 130 research papers injected.*")
                     if db_ctx:
                         sources.append("📊 *DB: Database measurements injected.*")
                     if sources:
