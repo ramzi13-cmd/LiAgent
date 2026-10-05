@@ -244,10 +244,10 @@ if page=="🏠  Overview":
     st.markdown('<div class="section-title">Conductivity Grade Guide</div>',unsafe_allow_html=True)
     c1,c2,c3,c4=st.columns(4)
     for col,(grade,rng,color,ex) in zip([c1,c2,c3,c4],[
-        ("Excellent","> 0.01 mS/cm","#27AE60","Li10GeP2S12, LLZO, Li6PS5Cl"),
-        ("Good","0.001-0.01 mS/cm","#2E5FA3","Li3PS4, LIPON, NASICON"),
-        ("Low","0.0001-0.001 mS/cm","#F39C12","Most oxides at RT"),
-        ("Very Low","< 0.0001 mS/cm","#C8392B","Undoped oxides")]):
+        ("Excellent","≥ 1 mS/cm","#27AE60","Li10GeP2S12, Li6PS5Cl, halides"),
+        ("Good","0.1-1 mS/cm","#2E5FA3","Doped LLZO, LATP, LLTO"),
+        ("Low","0.01-0.1 mS/cm","#F39C12","Li3PS4, LIPON, most oxides at RT"),
+        ("Very Low","< 0.01 mS/cm","#C8392B","Undoped oxides")]):
         col.markdown(f'<div style="background:white;border:1px solid #DDE3ED;border-radius:8px;padding:14px;border-top:4px solid {color};"><div style="font-weight:700;color:{color};font-size:1rem;">{grade}</div><div style="font-size:1.1rem;font-weight:600;color:#1B2A4A;">{rng}</div><div style="font-size:0.78rem;color:#5A6478;margin-top:4px;">e.g. {ex}</div></div>',unsafe_allow_html=True)
 
     import plotly.express as px
@@ -321,7 +321,7 @@ elif page=="🔍  Compound Explorer":
             year_range=st.slider("Year",yr_min,yr_max,(yr_min,yr_max))
         else: year_range=(2000,2026)
     with f3:
-        sf=st.selectbox("Conductivity Range",["All","Excellent (>0.01 mS/cm)","Good (0.001-0.01 mS/cm)","Low (0.0001-0.001 mS/cm)","Very Low (<0.0001 mS/cm)"])
+        sf=st.selectbox("Conductivity Range",["All","Excellent (>1 mS/cm)","Good (0.1-1 mS/cm)","Low (0.01-0.1 mS/cm)","Very Low (<0.01 mS/cm)"])
     src = "All Sources"
     df_filt=df_exp.copy()
     if search or search_btn:
@@ -355,10 +355,10 @@ elif page=="🔍  Compound Explorer":
                 df_filt=df_filt[df_filt['Composition'].str.contains(q,case=False,na=False)|df_filt['DOI'].astype(str).str.contains(q,case=False,na=False)]
     if mat_class!='All Classes': df_filt=df_filt[df_filt['Material Class']==mat_class]
     df_filt=df_filt[(df_filt['Year'].isna())|((df_filt['Year']>=year_range[0])&(df_filt['Year']<=year_range[1]))]
-    if sf=="Excellent (>0.01 mS/cm)":          df_filt=df_filt[df_filt['Conductivity']>0.01]
-    elif sf=="Good (0.001-0.01 mS/cm)":        df_filt=df_filt[(df_filt['Conductivity']>=0.001)&(df_filt['Conductivity']<=0.01)]
-    elif sf=="Low (0.0001-0.001 mS/cm)":       df_filt=df_filt[(df_filt['Conductivity']>=0.0001)&(df_filt['Conductivity']<0.001)]
-    elif sf=="Very Low (<0.0001 mS/cm)":        df_filt=df_filt[df_filt['Conductivity']<0.0001]
+    if sf=="Excellent (>1 mS/cm)":          df_filt=df_filt[df_filt['Conductivity']>1]
+    elif sf=="Good (0.1-1 mS/cm)":        df_filt=df_filt[(df_filt['Conductivity']>=0.1)&(df_filt['Conductivity']<=1)]
+    elif sf=="Low (0.01-0.1 mS/cm)":       df_filt=df_filt[(df_filt['Conductivity']>=0.01)&(df_filt['Conductivity']<0.1)]
+    elif sf=="Very Low (<0.01 mS/cm)":        df_filt=df_filt[df_filt['Conductivity']<0.01]
     if src!="All Sources": df_filt=df_filt[df_filt['Source']==src]
     st.markdown(f'<div style="background:#EBF8FF;border:1px solid #BEE3F8;border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:0.88rem;">Showing <b>{len(df_filt):,}</b> measurements from <b>{df_filt["Composition"].nunique()}</b> compounds and <b>{df_filt["DOI"].nunique()}</b> papers</div>',unsafe_allow_html=True)
     if search and len(df_filt)>0:
@@ -370,9 +370,9 @@ elif page=="🔍  Compound Explorer":
             year=f"{int(row['Year'])}" if pd.notna(row['Year']) else "N/A"
             cls=row['MC'] if pd.notna(row['MC']) else "Unknown"
             mx=row['MxC']
-            if mx>=0.01:    bc,gr='#27AE60','Excellent'
-            elif mx>=0.001:  bc,gr='#2E5FA3','Good'
-            elif mx>=0.0001: bc,gr='#F39C12','Low'
+            if mx>=1:    bc,gr='#27AE60','Excellent'
+            elif mx>=0.1:  bc,gr='#2E5FA3','Good'
+            elif mx>=0.01: bc,gr='#F39C12','Low'
             else:            bc,gr='#C8392B','Very Low'
             st.markdown(f'<div style="background:#FFF;border:1px solid #DDE3ED;border-radius:8px;padding:14px 18px;margin-bottom:8px;border-left:4px solid {bc};"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:700;color:#1B2A4A;font-size:1rem;">{row["Composition"]} <span style="background:{bc};color:white;font-size:0.7rem;padding:2px 7px;border-radius:10px;margin-left:8px;">{gr}</span></div><div style="color:#5A6478;font-size:0.82rem;margin-top:4px;">📅 {year} | 🧪 {cls} | 🌡️ {row["TR"]} | 📊 {int(row["N"])} measurements</div><div style="margin-top:6px;"><a href="{doi_url}" target="_blank" style="background:#2E5FA3;color:white;padding:4px 12px;border-radius:4px;text-decoration:none;font-size:0.8rem;">Open Paper: {doi}</a></div></div><div style="text-align:right;min-width:140px;"><div style="font-size:1.2rem;font-weight:700;color:{bc};">{mx:.4f}</div><div style="font-size:0.72rem;color:#5A6478;">Max Conductivity (mS/cm)</div><div style="font-size:0.75rem;color:#5A6478;">Range: {row["MnC"]:.4f}-{mx:.4f}</div></div></div></div>',unsafe_allow_html=True)
     st.markdown('<div class="section-title">📊 Visualizations</div>',unsafe_allow_html=True)
@@ -397,7 +397,7 @@ elif page=="🔍  Compound Explorer":
                 marker=dict(size=np.clip(np.log10(dp['N'].clip(1))*8+6,6,25),color='#2E5FA3',opacity=0.8,line=dict(color='white',width=0.5)),
                 customdata=np.column_stack([dp['doi_url'],dp['Composition'],dp['MaxC'].round(4),dp['Year_int'],dp['DOI']]),
                 hovertemplate="<b>%{customdata[1]}</b><br>Year: %{customdata[3]}<br>Max σ: %{customdata[2]} mS/cm<br>DOI: %{customdata[4]}<br><i>Click for details</i><extra></extra>"))
-        for val,label,color in [(0.01,'0.01 mS/cm - Excellent','#27AE60'),(0.001,'0.001 mS/cm - Good','#2E5FA3'),(0.0001,'0.0001 mS/cm - Low','#F39C12')]:
+        for val,label,color in [(1,'1 mS/cm - Excellent','#27AE60'),(0.1,'0.1 mS/cm - Good','#2E5FA3'),(0.01,'0.01 mS/cm - Low','#F39C12')]:
             fig_yr.add_hline(y=val,line_dash='dot',line_color=color,line_width=1.2,annotation_text=label,annotation_position='right',annotation_font_size=9,annotation_font_color=color)
         fig_yr.update_layout(height=520,paper_bgcolor='white',plot_bgcolor='#F7F9FC',font=dict(family='Source Sans 3',size=12),
             xaxis=dict(title='Publication Year',gridcolor='#DDE3ED',tickmode='linear',dtick=2,tickformat='d'),
@@ -416,7 +416,7 @@ elif page=="🔍  Compound Explorer":
         with cl:
             fh=go.Figure()
             fh.add_trace(go.Histogram(x=df_filt['log10_Conductivity'],nbinsx=50,marker_color='#2E5FA3',marker_line=dict(color='white',width=0.5),opacity=0.85))
-            for val,label,color in [(np.log10(0.0001),'Very Low','#C8392B'),(np.log10(0.001),'Low','#F39C12'),(np.log10(0.01),'Good','#2E5FA3'),(np.log10(0.1),'Excellent','#27AE60')]:
+            for val,label,color in [(np.log10(0.01),'Low','#F39C12'),(np.log10(0.1),'Good','#2E5FA3'),(np.log10(1),'Excellent','#27AE60')]:
                 fh.add_vline(x=val,line_dash='dash',line_color=color,line_width=1.5,annotation_text=label,annotation_position='top',annotation_font_size=9,annotation_font_color=color)
             fh.update_layout(title='Distribution of Ionic Conductivity',xaxis_title='log10(Conductivity in mS/cm)   [0=1 mS/cm, -1=0.1 mS/cm, 1=10 mS/cm]',yaxis_title='Number of Measurements',height=400,paper_bgcolor='white',plot_bgcolor='#F7F9FC',font=dict(family='Source Sans 3'),showlegend=False,margin=dict(l=50,r=20,t=50,b=80))
             fh.update_xaxes(gridcolor='#DDE3ED'); fh.update_yaxes(gridcolor='#DDE3ED')
@@ -515,14 +515,14 @@ elif page=="🤖  ML Prediction":
                     sigma=10**log10_sigma
                 except Exception as e:
                     st.error(f"Error: {e}"); st.stop()
-            if sigma>=0.0099:    grade,badge="Excellent","badge-high"
-            elif sigma>=0.00095:  grade,badge="Good","badge-medium"
-            elif sigma>=0.000095: grade,badge="Low","badge-low"
+            if sigma>=0.99:    grade,badge="Excellent","badge-high"
+            elif sigma>=0.095:  grade,badge="Good","badge-medium"
+            elif sigma>=0.0095: grade,badge="Low","badge-low"
             else:                 grade,badge="Very Low","badge-verylow"
-            _grade_range = ("> 0.01 mS/cm" if sigma>=0.01
-                else "0.001 - 0.01 mS/cm" if sigma>=0.001
-                else "0.0001 - 0.001 mS/cm" if sigma>=0.0001
-                else "< 0.0001 mS/cm")
+            _grade_range = ("≥ 1 mS/cm" if sigma>=1
+                else "0.1 - 1 mS/cm" if sigma>=0.1
+                else "0.01 - 0.1 mS/cm" if sigma>=0.01
+                else "< 0.01 mS/cm")
             st.markdown(f'<div class="result-box"><div style="font-size:0.9rem;color:#5A6478;margin-bottom:8px;">Predicted Ionic Conductivity for <b>{composition}</b> at {temp_c}°C</div><div><span class="result-sigma">{sigma:.4f}</span><span class="result-unit">mS/cm</span></div><div style="margin-top:12px;"><span class="badge {badge}">{grade} Conductivity</span><span style="font-size:0.82rem;color:#5A6478;margin-left:10px;">{_grade_range}</span></div><div style="margin-top:12px;font-size:0.9rem;color:#5A6478;">log₁₀(σ) = {log10_sigma:.4f} | Temperature = {temp_k:.2f} K</div></div>',unsafe_allow_html=True)
             st.markdown('<div class="section-title">Conductivity vs Temperature</div>',unsafe_allow_html=True)
             with st.spinner("Generating temperature sweep..."):
@@ -866,15 +866,15 @@ elif page=="⚗️  Composition Screening":
                 import plotly.graph_objects as go
 
                 def get_color(s):
-                    if s>=0.01: return "#27AE60"
-                    elif s>=0.001: return "#2E5FA3"
-                    elif s>=0.0001: return "#F39C12"
+                    if s>=1: return "#27AE60"
+                    elif s>=0.1: return "#2E5FA3"
+                    elif s>=0.01: return "#F39C12"
                     else: return "#C8392B"
 
                 def get_grade(s):
-                    if s>=0.01: return "Excellent"
-                    elif s>=0.001: return "Good"
-                    elif s>=0.0001: return "Low"
+                    if s>=1: return "Excellent"
+                    elif s>=0.1: return "Good"
+                    elif s>=0.01: return "Low"
                     else: return "Very Low"
 
                 def render_card(pred, mp_verified=True):
@@ -925,7 +925,7 @@ elif page=="⚗️  Composition Screening":
                                     line=dict(color="#2E5FA3", width=2.5),
                                     marker=dict(size=6),
                                     name=pred["formula"]))
-                                for _v,_l,_c in [(0.01,"Excellent","#27AE60"),(0.001,"Good","#2E5FA3"),(0.0001,"Low","#F39C12")]:
+                                for _v,_l,_c in [(1,"Excellent","#27AE60"),(0.1,"Good","#2E5FA3"),(0.01,"Low","#F39C12")]:
                                     _fig2.add_hline(y=_v,line_dash="dot",line_color=_c,annotation_text=_l,annotation_position="right",annotation_font_size=9)
                                 _fig2.update_layout(
                                     title=f"σ vs Temperature: {pred['formula']}",
@@ -940,8 +940,8 @@ elif page=="⚗️  Composition Screening":
                                 _fig2.update_yaxes(gridcolor="#DDE3ED")
                                 st.plotly_chart(_fig2, use_container_width=True)
                                 _sig25 = _sigs[0]
-                                _gr25  = "Excellent" if _sig25>=0.01 else "Good" if _sig25>=0.001 else "Low" if _sig25>=0.0001 else "Very Low"
-                                _bc25  = "#27AE60" if _sig25>=0.01 else "#2E5FA3" if _sig25>=0.001 else "#F39C12" if _sig25>=0.0001 else "#C8392B"
+                                _gr25  = "Excellent" if _sig25>=1 else "Good" if _sig25>=0.1 else "Low" if _sig25>=0.01 else "Very Low"
+                                _bc25  = "#27AE60" if _sig25>=1 else "#2E5FA3" if _sig25>=0.1 else "#F39C12" if _sig25>=0.01 else "#C8392B"
                                 st.markdown(
                                     f'<div style="background:#F0FFF4;border:1px solid #C6F6D5;border-radius:8px;padding:12px 16px;">'
                                     f'<b>At 25°C:</b> σ = {_sig25:.4f} mS/cm — '
@@ -967,7 +967,7 @@ elif page=="⚗️  Composition Screening":
                             text=dt["sigma"].round(4),textposition="outside",
                             hovertemplate="<b>%{x}</b><br>σ = %{y:.4f} mS/cm<br>"+tier+"<extra></extra>"
                         ))
-                    for val,label,color in [(0.01,"0.01 mS/cm - Excellent","#27AE60"),(0.001,"0.001 mS/cm - Good","#2E5FA3"),(0.0001,"0.0001 mS/cm - Low","#F39C12")]:
+                    for val,label,color in [(1,"1 mS/cm - Excellent","#27AE60"),(0.1,"0.1 mS/cm - Good","#2E5FA3"),(0.01,"0.01 mS/cm - Low","#F39C12")]:
                         fig_sc.add_hline(y=val,line_dash="dot",line_color=color,line_width=1.2,annotation_text=label,annotation_position="right",annotation_font_size=9,annotation_font_color=color)
                     fig_sc.update_layout(
                         xaxis_title="Composition",yaxis_title="Predicted Ionic Conductivity (mS/cm)",
@@ -1023,15 +1023,15 @@ if st.session_state.get("_screen_done"):
     hull_threshold = st.session_state.get("_screen_hull",0.05)
 
     def get_color2(s):
-        if s>=0.01: return "#27AE60"
-        elif s>=0.001: return "#2E5FA3"
-        elif s>=0.0001: return "#F39C12"
+        if s>=1: return "#27AE60"
+        elif s>=0.1: return "#2E5FA3"
+        elif s>=0.01: return "#F39C12"
         else: return "#C8392B"
 
     def get_grade2(s):
-        if s>=0.01: return "Excellent"
-        elif s>=0.001: return "Good"
-        elif s>=0.0001: return "Low"
+        if s>=1: return "Excellent"
+        elif s>=0.1: return "Good"
+        elif s>=0.01: return "Low"
         else: return "Very Low"
 
     def render_card2(pred, mp_verified=True):
@@ -1080,9 +1080,9 @@ if st.session_state.get("_screen_done"):
                         marker=dict(size=6),
                         name=pred["formula"]))
                     for _v,_l,_c in [
-                        (0.01,"Excellent","#27AE60"),
+                        (1,"Excellent","#27AE60"),
                         (0.1,"Good","#2E5FA3"),
-                        (0.01,"Average","#F39C12")]:
+                        (0.01,"Low","#F39C12")]:
                         _fig2.add_hline(y=_v,line_dash="dot",
                             line_color=_c,
                             annotation_text=_l,
@@ -1204,7 +1204,7 @@ elif page=="📦  Batch Prediction":
                 try:
                     X_b=generate_base_features(comp_str); X_b["Temp"]=temp_k_b
                     ls=model.predict(X_b)[0]; sig=10**ls
-                    results.append({"Composition":comp_str,"Temperature_C":temp_c_b,"Predicted_Sigma_mS_cm":round(sig,6),"log10_Sigma":round(ls,4),"Grade":"Excellent" if sig>=0.01 else "Good" if sig>=0.001 else "Low" if sig>=0.0001 else "Very Low","Status":"Success"})
+                    results.append({"Composition":comp_str,"Temperature_C":temp_c_b,"Predicted_Sigma_mS_cm":round(sig,6),"log10_Sigma":round(ls,4),"Grade":"Excellent" if sig>=1 else "Good" if sig>=0.1 else "Low" if sig>=0.01 else "Very Low","Status":"Success"})
                 except Exception as e:
                     results.append({"Composition":comp_str,"Temperature_C":temp_c_b,"Predicted_Sigma_mS_cm":None,"log10_Sigma":None,"Grade":"Error","Status":str(e)[:50]})
                 progress.progress(int((idx+1)/len(compounds_to_predict)*100))
@@ -1260,7 +1260,7 @@ elif page=="🌡️  Arrhenius Calculator":
             sigma_arr=comp["sig0"]*np.exp(-comp["ea"]/(k_B*temps_k_arr))
             x_vals_arr=temps_c_arr if "Temperature" in x_axis_arr else inv_T_arr
             fig_arr.add_trace(go.Scatter(x=x_vals_arr,y=sigma_arr,mode="lines",name=f"{comp['name']} (Ea={comp['ea']} eV)",line=dict(color=colors_arr[i],width=2.5)))
-        for val,label,color in [(0.01,"0.01 mS/cm - Excellent","#27AE60"),(0.001,"0.001 mS/cm - Good","#2E5FA3"),(0.0001,"0.0001 mS/cm - Low","#F39C12")]:
+        for val,label,color in [(1,"1 mS/cm - Excellent","#27AE60"),(0.1,"0.1 mS/cm - Good","#2E5FA3"),(0.01,"0.01 mS/cm - Low","#F39C12")]:
             fig_arr.add_hline(y=val,line_dash="dot",line_color=color,line_width=1,annotation_text=label,annotation_position="right",annotation_font_size=9,annotation_font_color=color)
         x_title_arr="Temperature (C)" if "Temperature" in x_axis_arr else "1000/T (1/K)"
         fig_arr.update_layout(title="Arrhenius Plot - Ionic Conductivity vs Temperature",xaxis_title=x_title_arr,yaxis_title="Ionic Conductivity (mS/cm)",yaxis_type="log",height=500,paper_bgcolor="white",plot_bgcolor="#F7F9FC",font=dict(family="Source Sans 3"),legend=dict(orientation="h",yanchor="bottom",y=1.02),margin=dict(l=60,r=150,t=60,b=60))
