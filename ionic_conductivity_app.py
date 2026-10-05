@@ -656,6 +656,7 @@ elif page=="🤖  ML Prediction":
                         _db_ctx = "\n".join(_db_lines) if _db_lines else "  No matching entries in database."
                         # ── RAG context for prediction ────────────
                         _rag_ctx_pred = ""
+                        st.session_state["_exp_sources"] = "RAG index not loaded (no literature was retrieved)."
                         try:
                             if _rag_collection is not None:
                                 _mat_class = ""
@@ -696,8 +697,12 @@ elif page=="🤖  ML Prediction":
                                     _rag_lines.append(_rdoc[:1200])
                                     _rag_lines.append("")
                                 _rag_ctx_pred = "\n".join(_rag_lines)
+                                st.session_state["_exp_sources"] = [
+                                    (str(_m.get("source","Unknown")).replace(".pdf",""), round(float(_d),3), _t[:300])
+                                    for _t,_m,_d in zip(_rag_docs,_rag_metas,_rag_dists)]
                         except Exception as _re:
                             _rag_ctx_pred = ""
+                            st.session_state["_exp_sources"] = "RAG retrieval failed: " + str(_re)[:200]
 
                         # ── Build improved prompt with hierarchy ──
                         _intro = (
@@ -771,6 +776,14 @@ elif page=="🤖  ML Prediction":
                     st.markdown("**AI Explanation for " + st.session_state["_pred_comp"] + " at " + str(st.session_state["_pred_tc"]) + "°C**")
                     st.markdown(_res)
                     st.markdown('</div>',unsafe_allow_html=True)
+                    _xs = st.session_state.get("_exp_sources")
+                    with st.expander("Literature passages retrieved for this explanation"):
+                        if isinstance(_xs, list):
+                            for _n,(_src,_dist,_snip) in enumerate(_xs,1):
+                                st.markdown(f"**{_n}. {_src}** (cosine distance {_dist})")
+                                st.caption(_snip + " ...")
+                        else:
+                            st.write(_xs or "No retrieval information available.")
                     if st.button("Clear explanation", key="clear_explain"):
                         st.session_state["_exp_on"] = False
                         st.session_state["_exp_result"] = None
