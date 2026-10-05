@@ -66,7 +66,7 @@ def _load_rag():
     try:
         import chromadb
         from chromadb.utils import embedding_functions
-        rag_dir = "./rag_database"
+        rag_dir = "./rag_db_v2"
         client  = chromadb.PersistentClient(path=rag_dir)
         emb_fn  = embedding_functions.SentenceTransformerEmbeddingFunction(
             model_name="all-MiniLM-L6-v2")
@@ -77,7 +77,7 @@ def _load_rag():
     except Exception as e:
         import os as _os
         try:
-            _ls = _os.listdir("./rag_database")
+            _ls = _os.listdir("./rag_db_v2")
         except Exception as _e2:
             _ls = "cannot list: " + str(_e2)
         try:
@@ -85,7 +85,7 @@ def _load_rag():
             _v = _c.__version__
         except Exception:
             _v = "chromadb not importable"
-        return None, "chromadb " + str(_v) + " | " + type(e).__name__ + ": " + str(e)[:300] + " | rag_database contents: " + str(_ls)[:300]
+        return None, "chromadb " + str(_v) + " | " + type(e).__name__ + ": " + str(e)[:300] + " | rag_db_v2 contents: " + str(_ls)[:300]
 
 @st.cache_resource
 def load_model():
